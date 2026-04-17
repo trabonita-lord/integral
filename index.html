@@ -1,67 +1,318 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Illustration of Net Area from Graphs</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Illustration of Net Area from Graphs — Definite Integrals</title>
+  <meta name="description" content="A visual lesson on net (signed) area and definite integrals with an animated scene and interactive demo." />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <header>
-        <h1 aria-label="Lesson on Net Area">Illustration of Net Area from Graphs</h1>
-    </header>
+  <a class="skip" href="#content">Skip to content</a>
 
-    <section id="overview">
-        <h2>Overview</h2>
-        <p>This lesson explains how to evaluate definite integrals as net (signed) area between a function and the x-axis.</p>
-    </section>
-
-    <section id="signed-area-intuition">
-        <h2>Signed Area Intuition</h2>
-        <p>Understanding signed area requires recognizing that areas above the x-axis count positively, while areas below it count negatively.</p>
-    </section>
-
-    <section id="step-by-step-method">
-        <h2>Step-by-Step Method</h2>
-        <ol>
-            <li>Identify the function and the interval [a, b].</li>
-            <li>Calculate the integral using the appropriate methods.</li>
-            <li>Interpret the results in terms of area.</li>
-        </ol>
-    </section>
-
-    <section id="worked-examples">
-        <h2>Worked Examples</h2>
-        <article>
-            <h3>Example 1</h3>
-            <p>Consider the function f(x) = x^2 in the interval [0, 1]. The calculated area is ...</p>
-        </article>
-        <article>
-            <h3>Example 2</h3>
-            <p>For f(x) = -x^2 in the interval [-1, 0], the net area is ...</p>
-        </article>
-    </section>
-
-    <section id="common-pitfalls">
-        <h2>Common Pitfalls</h2>
-        <p>Many students forget to consider the sign of the area under the x-axis, leading to misunderstanding of net area.</p>
-    </section>
-
-    <section id="interactive-demo">
-        <h2>Interactive Demo</h2>
-        <div id="scene">
-            <div class="waterline"></div>
-            <div class="mountain"></div>
-            <div class="iceberg"></div>
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="brand">
+        <div class="brand__dot"></div>
+        <div class="brand__text">
+          <div class="brand__title">Net Area from Graphs</div>
+          <div class="brand__subtitle">Definite integrals as signed area</div>
         </div>
-        <p>Adjust the range to see how the net area differs.</p>
+      </div>
+      <nav class="nav">
+        <a href="#sceneSection">Visual</a>
+        <a href="#lesson">Lesson</a>
+        <a href="#examples">Examples</a>
+        <a href="#demo">Interactive</a>
+        <a href="#summary">Summary</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content">
+    <!-- HERO / SCENE -->
+    <section id="sceneSection" class="section section--hero">
+      <div class="hero">
+        <div class="hero__copy">
+          <h1>Illustration of Net Area from Graphs</h1>
+          <p class="lead">
+            A conceptual “mountain + iceberg” scene to remember:
+            <strong>area above the x-axis contributes positively</strong>,
+            and <strong>area below contributes negatively</strong>.
+            That’s why a definite integral gives the <em>net</em> (signed) area.
+          </p>
+
+          <div class="callouts">
+            <div class="pill pill--green">
+              <span class="pill__swatch"></span>
+              Positive area (above x-axis)
+            </div>
+            <div class="pill pill--red">
+              <span class="pill__swatch"></span>
+              Negative area (below x-axis)
+            </div>
+          </div>
+
+          <div class="formulaCard">
+            <div class="formulaCard__kicker">Key idea</div>
+            <div class="formulaCard__formula">
+              \[
+                \int_a^b f(x)\,dx = \text{(area above x-axis)} - \text{(area below x-axis)}
+              \]
+            </div>
+            <div class="formulaCard__note">
+              In this website we’ll learn how to compute this by splitting the interval at x-intercepts.
+            </div>
+          </div>
+        </div>
+
+        <div class="hero__visual">
+          <div id="scene" class="scene" role="img" aria-label="A glowing x-axis waterline. Green mountain above for positive area and red iceberg below for negative area.">
+            <div class="scene__vignette"></div>
+            <div class="scene__grain"></div>
+
+            <!-- Glow “waterline” = x-axis -->
+            <div class="waterline" aria-hidden="true"></div>
+
+            <!-- Mountain (positive area) -->
+            <div class="mountain" aria-hidden="true"></div>
+
+            <!-- Iceberg (negative area) -->
+            <div class="iceberg" aria-hidden="true"></div>
+
+            <!-- Labels -->
+            <div class="sceneLabel sceneLabel--pos">
+              + area
+            </div>
+            <div class="sceneLabel sceneLabel--neg">
+              − area
+            </div>
+          </div>
+
+          <div class="caption">
+            Low‑poly style is simulated with layered polygons + glow + rays.
+            Scroll for the full lesson and an interactive net-area calculator.
+          </div>
+        </div>
+      </div>
     </section>
 
-    <section id="summary">
-        <h2>Summary</h2>
-        <p>In conclusion, evaluating definite integrals involves understanding areas as positive and negative contributions.
-        <a href="#">Back to top</a>
+    <!-- LESSON -->
+    <section id="lesson" class="section">
+      <h2>1) What is “net area”?</h2>
+      <p>
+        When we say <strong>net area</strong> (also called <strong>signed area</strong>), we mean:
+        <strong>area above the x-axis counts as positive</strong>, while
+        <strong>area below the x-axis counts as negative</strong>.
+      </p>
+
+      <div class="panel">
+        <h3>Why do we need “signed” area?</h3>
+        <p>
+          A definite integral <code>∫ f(x) dx</code> measures accumulation. If <code>f(x)</code> is positive,
+          the accumulation increases; if <code>f(x)</code> is negative, the accumulation decreases.
+          That behavior matches “positive area” and “negative area”.
+        </p>
+      </div>
+
+      <h2>2) The definite integral as net area</h2>
+      <p>
+        For a continuous function <code>f</code> on <code>[a,b]</code>, the definite integral
+        <code>∫<sub>a</sub><sup>b</sup> f(x) dx</code> equals the net area between the graph of <code>f</code> and the x-axis
+        from <code>x=a</code> to <code>x=b</code>.
+      </p>
+
+      <div class="twoCol">
+        <div class="card">
+          <h3>Above the x-axis</h3>
+          <p>
+            If <code>f(x) ≥ 0</code> on <code>[a,b]</code>, then
+            <code>∫<sub>a</sub><sup>b</sup> f(x) dx</code> equals the usual geometric area.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Below the x-axis</h3>
+          <p>
+            If <code>f(x) ≤ 0</code> on <code>[a,b]</code>, then
+            <code>∫<sub>a</sub><sup>b</sup> f(x) dx</code> is <em>negative</em> and equals
+            minus the geometric area.
+          </p>
+        </div>
+      </div>
+
+      <div class="panel panel--warn">
+        <h3>Important: net area vs total area</h3>
+        <p>
+          The integral gives <strong>net</strong> area.
+          If you want <strong>total area</strong> (always positive), you usually compute
+          <code>∫<sub>a</sub><sup>b</sup> |f(x)| dx</code> or split into pieces and add geometric areas.
+        </p>
+      </div>
+
+      <h2>3) How to compute net area from a graph (practical method)</h2>
+      <ol class="steps">
+        <li>
+          <strong>Mark the interval</strong> on the x-axis: from <code>a</code> to <code>b</code>.
+        </li>
+        <li>
+          <strong>Find x-intercepts</strong> of the function (where it crosses the x-axis).
+          These are points where the sign of <code>f(x)</code> can change.
+        </li>
+        <li>
+          <strong>Split the integral</strong> at each intercept:
+          <code>∫<sub>a</sub><sup>b</sup> f(x)dx = ∫<sub>a</sub><sup>c</sup> f(x)dx + ∫<sub>c</sub><sup>b</sup> f(x)dx</code>
+          (and continue if there are more intercepts).
+        </li>
+        <li>
+          <strong>Compute each piece</strong>. Pieces above the axis contribute positive values; pieces below contribute negative values.
+        </li>
+        <li>
+          <strong>Add them</strong> to get the net (signed) total.
+        </li>
+      </ol>
     </section>
-    <script src="app.js"></script>
+
+    <!-- EXAMPLES -->
+    <section id="examples" class="section">
+      <h2>4) Worked examples (net area)</h2>
+
+      <div class="example">
+        <h3>Example A: One region above the axis</h3>
+        <p>
+          Compute <code>∫<sub>0</sub><sup>2</sup> x dx</code>.
+          The graph <code>y = x</code> is above the x-axis on <code>[0,2]</code>.
+        </p>
+        <div class="mathBlock">
+          <div><code>∫<sub>0</sub><sup>2</sup> x dx = [x²/2]<sub>0</sub><sup>2</sup> = (4/2) - 0 = 2</code></div>
+        </div>
+        <p class="note">
+          Interpretation: net area = geometric area = 2.
+        </p>
+      </div>
+
+      <div class="example">
+        <h3>Example B: One region below the axis</h3>
+        <p>
+          Compute <code>∫<sub>0</sub><sup>2</sup> (-x) dx</code>.
+          The graph <code>y = -x</code> is below the x-axis on <code>[0,2]</code>.
+        </p>
+        <div class="mathBlock">
+          <div><code>∫<sub>0</sub><sup>2</sup> (-x) dx = [-x²/2]<sub>0</sub><sup>2</sup> = -(4/2) - 0 = -2</code></div>
+        </div>
+        <p class="note">
+          Interpretation: net area is negative because the region is below the axis.
+        </p>
+      </div>
+
+      <div class="example">
+        <h3>Example C: Crosses the axis (split into pieces)</h3>
+        <p>
+          Compute <code>∫<sub>-1</sub><sup>2</sup> (x-1) dx</code>.
+          The function <code>f(x)=x-1</code> crosses the x-axis at <code>x=1</code>.
+        </p>
+        <div class="mathBlock">
+          <div><code>∫<sub>-1</sub><sup>2</sup> (x-1) dx = ∫<sub>-1</sub><sup>1</sup> (x-1) dx + ∫<sub>1</sub><sup>2</sup> (x-1) dx</code></div>
+          <div><code>= [x²/2 - x]<sub>-1</sub><sup>1</sup> + [x²/2 - x]<sub>1</sub><sup>2</sup></code></div>
+          <div><code>= ((1/2 - 1) - (1/2 + 1)) + ((2 - 2) - (1/2 - 1))</code></div>
+          <div><code>= (-1/2 - 3/2) + (0 - (-1/2)) = (-2) + (1/2) = -3/2</code></div>
+        </div>
+        <p class="note">
+          Net area is negative overall, meaning “more area” lies below the x-axis than above it.
+        </p>
+      </div>
+
+      <div class="panel panel--tip">
+        <h3>Quick self-check</h3>
+        <ul>
+          <li>If the graph is mostly below the x-axis on the interval, the integral should be negative.</li>
+          <li>If the graph is symmetric above and below (equal magnitudes), the net area may be 0.</li>
+          <li>If you want total area, use <code>|f(x)|</code> (absolute value), not <code>f(x)</code>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- DEMO -->
+    <section id="demo" class="section">
+      <h2>5) Interactive net-area demo</h2>
+      <p>
+        Choose a function, pick an interval, and this demo will compute:
+        <strong>net area</strong> (<code>∫ f(x) dx</code>) and
+        <strong>total area</strong> (<code>∫ |f(x)| dx</code> approximated).
+        This is meant to build intuition, not replace exact algebra.
+      </p>
+
+      <div class="demo">
+        <div class="demo__controls">
+          <label>
+            Function
+            <select id="fn">
+              <option value="x-1">f(x) = x − 1</option>
+              <option value="sin">f(x) = sin(x)</option>
+              <option value="quad">f(x) = x² − 1</option>
+              <option value="negabs">f(x) = −|x| + 1</option>
+            </select>
+          </label>
+
+          <div class="rangeRow">
+            <label>
+              a:
+              <input id="a" type="number" step="0.5" value="-1"/>
+            </label>
+            <label>
+              b:
+              <input id="b" type="number" step="0.5" value="2"/>
+            </label>
+          </div>
+
+          <label>
+            Resolution (more = smoother)
+            <input id="n" type="range" min="50" max="1200" value="400"/>
+          </label>
+
+          <button id="compute" class="btn">Compute</button>
+
+          <div class="demo__results" aria-live="polite">
+            <div class="resultLine">
+              <span class="resultLabel">Net area (≈)</span>
+              <span id="net" class="resultValue">—</span>
+            </div>
+            <div class="resultLine">
+              <span class="resultLabel">Total area (≈)</span>
+              <span id="total" class="resultValue">—</span>
+            </div>
+          </div>
+
+          <div class="demo__hint">
+            Tip: If your net area is near 0, it may mean the positive and negative parts cancel out.
+          </div>
+        </div>
+
+        <div class="demo__canvasWrap">
+          <canvas id="plot" width="720" height="420" aria-label="Graph plot canvas"></canvas>
+          <div class="demo__legend">
+            <span class="legend legend--pos">above axis = +</span>
+            <span class="legend legend--neg">below axis = −</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUMMARY -->
+    <section id="summary" class="section">
+      <h2>Summary</h2>
+      <ul>
+        <li><strong>Definite integrals</strong> represent accumulation and equal <strong>net (signed) area</strong> from <code>a</code> to <code>b</code>.</li>
+        <li>Regions above the x-axis contribute <strong>positive</strong> area; below contribute <strong>negative</strong> area.</li>
+        <li>When a graph crosses the x-axis, split the integral at the intercept(s).</li>
+        <li>If you want <strong>total area</strong>, compute <code>∫ |f(x)| dx</code> (or split and add magnitudes).</li>
+      </ul>
+
+      <div class="footer">
+        <a class="btn btn--ghost" href="#sceneSection">Back to top</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
 </body>
 </html>
