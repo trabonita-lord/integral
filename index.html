@@ -1,318 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Illustration of Net Area from Graphs — Definite Integrals</title>
-  <meta name="description" content="A visual lesson on net (signed) area and definite integrals with an animated scene and interactive demo." />
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Definite Integrals & Net Area</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <a class="skip" href="#content">Skip to content</a>
-
-  <header class="topbar">
-    <div class="topbar__inner">
-      <div class="brand">
-        <div class="brand__dot"></div>
-        <div class="brand__text">
-          <div class="brand__title">Net Area from Graphs</div>
-          <div class="brand__subtitle">Definite integrals as signed area</div>
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Net Area & Definite Integrals</h1>
+            <p>Calculus visually explained: Mountains, Icebergs, and the Waterline.</p>
         </div>
-      </div>
-      <nav class="nav">
-        <a href="#sceneSection">Visual</a>
-        <a href="#lesson">Lesson</a>
-        <a href="#examples">Examples</a>
-        <a href="#demo">Interactive</a>
-        <a href="#summary">Summary</a>
-      </nav>
-    </div>
-  </header>
+        <div class="hero-visual" id="hero-visual">
+            <svg viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                    <filter id="glow-green" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="8" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                    <filter id="glow-red" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="8" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                    <filter id="glow-blue">
+                        <feGaussianBlur stdDeviation="4" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                </defs>
+                <!-- Waterline (x-axis) -->
+                <line x1="0" y1="200" x2="800" y2="200" stroke="#00d2ff" stroke-width="4" filter="url(#glow-blue)" />
+                <!-- Mountain (Positive Area) -->
+                <path d="M 400 200 L 600 50 L 800 200 Z" fill="rgba(0, 255, 128, 0.4)" stroke="#00ff80" stroke-width="3" filter="url(#glow-green)" />
+                <!-- Iceberg (Negative Area) -->
+                <path d="M 0 200 L 200 350 L 400 200 Z" fill="rgba(255, 64, 64, 0.4)" stroke="#ff4040" stroke-width="3" filter="url(#glow-red)" />
+                <text x="560" y="140" fill="#00ff80" font-size="24" font-weight="bold">+ Area (Mountain)</text>
+                <text x="160" y="280" fill="#ff4040" font-size="24" font-weight="bold">- Area (Iceberg)</text>
+                <text x="20" y="190" fill="#00d2ff" font-size="20">Waterline (x-axis)</text>
+            </svg>
+        </div>
+    </header>
 
-  <main id="content">
-    <!-- HERO / SCENE -->
-    <section id="sceneSection" class="section section--hero">
-      <div class="hero">
-        <div class="hero__copy">
-          <h1>Illustration of Net Area from Graphs</h1>
-          <p class="lead">
-            A conceptual “mountain + iceberg” scene to remember:
-            <strong>area above the x-axis contributes positively</strong>,
-            and <strong>area below contributes negatively</strong>.
-            That’s why a definite integral gives the <em>net</em> (signed) area.
-          </p>
-
-          <div class="callouts">
-            <div class="pill pill--green">
-              <span class="pill__swatch"></span>
-              Positive area (above x-axis)
+    <main>
+        <section id="hook" class="presentation-section">
+            <div class="avatar concept-lead"></div>
+            <h2>Concept Lead (The Hook)</h2>
+            <div class="content">
+                <p>Welcome to the world of Calculus! Have you ever wondered how to find the exact area of irregular shapes? We use <strong>Definite Integrals</strong>.</p>
+                <p>Think of the x-axis as the surface of the ocean. Areas above the water are positive "mountains". Areas below the water are negative "icebergs". <strong>Net Area</strong> is simply the mountains plus the icebergs.</p>
+                <p>The <strong>Fundamental Theorem of Calculus (FTC)</strong> is our magic key. It says: <br>
+                <span class="math-block">&int;<sub>a</sub><sup>b</sup> f(x) dx = F(b) - F(a)</span><br>
+                This means to find the exact area under a curve <em>f(x)</em> from <em>a</em> to <em>b</em>, we just find its antiderivative <em>F(x)</em> and subtract the start value from the end value!</p>
             </div>
-            <div class="pill pill--red">
-              <span class="pill__swatch"></span>
-              Negative area (below x-axis)
+        </section>
+
+        <section id="grapher" class="presentation-section alt-bg">
+            <div class="avatar visual-architect"></div>
+            <h2>Visual Architect (The Grapher)</h2>
+            <div class="content">
+                <p>Let's look at a completely original example. We will use the function <strong>f(x) = 2x - 4</strong> over the interval <strong>[0, 4]</strong>.</p>
+                <p>Notice how this line starts below the x-axis (underwater) and crosses over to become a mountain. Let's see it visually.</p>
+                <div class="interactive-container">
+                    <canvas id="main-graph" width="500" height="300"></canvas>
+                </div>
             </div>
-          </div>
+        </section>
 
-          <div class="formulaCard">
-            <div class="formulaCard__kicker">Key idea</div>
-            <div class="formulaCard__formula">
-              \[
-                \int_a^b f(x)\,dx = \text{(area above x-axis)} - \text{(area below x-axis)}
-              \]
+        <section id="analyzer" class="presentation-section">
+            <div class="avatar geometry-specialist"></div>
+            <h2>The Geometry Specialist (The Analyzer)</h2>
+            <div class="content">
+                <p>Because our function is a straight line, we can actually use basic geometry to find the area before we use calculus!</p>
+                <p>Looking at the graph, we have two triangles. To find the net area, we need to know exactly where the graph crosses the x-axis (the x-intercept) so we can split the shape.</p>
+                
+                <div class="interactive-box">
+                    <h3>Interactive: Find the Intercept</h3>
+                    <p>Click on the exact point on the x-axis below where the function f(x) = 2x - 4 crosses from negative to positive.</p>
+                    <div id="click-intercept-area">
+                        <canvas id="intercept-canvas" width="500" height="150"></canvas>
+                    </div>
+                    <p id="intercept-feedback" class="feedback"></p>
+                </div>
+                
+                <div id="geometry-explanation" class="hidden">
+                    <p>Great! It crosses at <strong>x = 2</strong>. This gives us two triangles:</p>
+                    <ul>
+                        <li><strong>Iceberg Triangle [0, 2]:</strong> Base = 2, Height = -4. Area = &frac12; &times; 2 &times; (-4) = <strong>-4</strong></li>
+                        <li><strong>Mountain Triangle [2, 4]:</strong> Base = 2, Height = 4. Area = &frac12; &times; 2 &times; 4 = <strong>4</strong></li>
+                    </ul>
+                </div>
             </div>
-            <div class="formulaCard__note">
-              In this website we’ll learn how to compute this by splitting the interval at x-intercepts.
+        </section>
+
+        <section id="solver" class="presentation-section alt-bg">
+            <div class="avatar calculator-expert"></div>
+            <h2>The Calculator (The Solver)</h2>
+            <div class="content">
+                <p>Now, let's prove the Geometry Specialist is correct by using the Fundamental Theorem of Calculus.</p>
+                <p>We want to evaluate: <strong>&int;<sub>0</sub><sup>4</sup> (2x - 4) dx</strong></p>
+                
+                <div class="step-container">
+                    <div class="step hidden" id="step1">
+                        <p><strong>Step 1: Find the antiderivative, F(x).</strong></p>
+                        <p>The antiderivative of 2x is x&sup2;. The antiderivative of -4 is -4x.</p>
+                        <p class="math-block">F(x) = x&sup2; - 4x</p>
+                    </div>
+                    <div class="step hidden" id="step2">
+                        <p><strong>Step 2: Evaluate F(b) - F(a). Here, b=4 and a=0.</strong></p>
+                        <p class="math-block">F(4) = (4)&sup2; - 4(4) = 16 - 16 = 0</p>
+                        <p class="math-block">F(0) = (0)&sup2; - 4(0) = 0 - 0 = 0</p>
+                    </div>
+                    <div class="step hidden" id="step3">
+                        <p><strong>Step 3: Calculate the final Net Area.</strong></p>
+                        <p class="math-block">F(4) - F(0) = 0 - 0 = 0</p>
+                        <p>The net area is 0! This matches our geometric calculation (-4 + 4 = 0).</p>
+                    </div>
+                    <div class="controls">
+                        <button id="btn-next-step" class="btn">Next Step</button>
+                        <button id="btn-reset-steps" class="btn btn-secondary">Reset</button>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
+        </section>
 
-        <div class="hero__visual">
-          <div id="scene" class="scene" role="img" aria-label="A glowing x-axis waterline. Green mountain above for positive area and red iceberg below for negative area.">
-            <div class="scene__vignette"></div>
-            <div class="scene__grain"></div>
+        <section id="closer" class="presentation-section">
+            <div class="avatar master-reviewer"></div>
+            <h2>The Master Reviewer (The Closer)</h2>
+            <div class="content">
+                <p>To wrap up, we must understand the critical difference between <strong>Net Area</strong> and <strong>Total Area</strong>.</p>
+                <p><strong>Net Area</strong> cancels out. If you dig a 4-foot hole (Area = -4) and create a 4-foot dirt pile (Area = 4), the net change to the landscape is 0. Calculus computes <em>Net Area</em> by default.</p>
+                <p><strong>Total Area</strong> is absolute. If I want to paint the triangles, I don't care that one is upside down. I need paint for 4 square units PLUS 4 square units. Total Area = |-4| + |4| = 8.</p>
 
-            <!-- Glow “waterline” = x-axis -->
-            <div class="waterline" aria-hidden="true"></div>
+                <div class="interactive-box">
+                    <h3>Interactive Graphing Demo</h3>
+                    <p>Choose a function and see the difference between Net and Total Area!</p>
+                    <div class="demo-controls">
+                        <label for="func-select">Function:</label>
+                        <select id="func-select">
+                            <option value="linear">f(x) = 2x - 4 on [0, 4]</option>
+                            <option value="sine">f(x) = sin(x) on [0, 2&pi;]</option>
+                            <option value="cubic">f(x) = x&sup3; - x on [-1, 1]</option>
+                        </select>
+                    </div>
+                    <div class="demo-display">
+                        <canvas id="demo-canvas" width="600" height="300"></canvas>
+                        <div class="demo-stats">
+                            <p>Net Area: <span id="stat-net" class="stat-highlight">0</span></p>
+                            <p>Total Area: <span id="stat-total" class="stat-highlight">8</span></p>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Mountain (positive area) -->
-            <div class="mountain" aria-hidden="true"></div>
-
-            <!-- Iceberg (negative area) -->
-            <div class="iceberg" aria-hidden="true"></div>
-
-            <!-- Labels -->
-            <div class="sceneLabel sceneLabel--pos">
-              + area
+                <div class="quiz-box">
+                    <h3>Knowledge Check</h3>
+                    <p>If a definite integral evaluates to a negative number, what does that mean?</p>
+                    <div class="quiz-options">
+                        <label><input type="radio" name="q1" value="wrong1"> The math was done incorrectly.</label>
+                        <label><input type="radio" name="q1" value="correct"> There is more area below the x-axis than above it.</label>
+                        <label><input type="radio" name="q1" value="wrong2"> The total area is zero.</label>
+                    </div>
+                    <button id="btn-submit-quiz" class="btn">Submit Answer</button>
+                    <p id="quiz-feedback" class="feedback"></p>
+                </div>
             </div>
-            <div class="sceneLabel sceneLabel--neg">
-              − area
-            </div>
-          </div>
+        </section>
+    </main>
 
-          <div class="caption">
-            Low‑poly style is simulated with layered polygons + glow + rays.
-            Scroll for the full lesson and an interactive net-area calculator.
-          </div>
-        </div>
-      </div>
-    </section>
+    <footer>
+        <p>Created for High School Calculus Students. Learn visually!</p>
+    </footer>
 
-    <!-- LESSON -->
-    <section id="lesson" class="section">
-      <h2>1) What is “net area”?</h2>
-      <p>
-        When we say <strong>net area</strong> (also called <strong>signed area</strong>), we mean:
-        <strong>area above the x-axis counts as positive</strong>, while
-        <strong>area below the x-axis counts as negative</strong>.
-      </p>
-
-      <div class="panel">
-        <h3>Why do we need “signed” area?</h3>
-        <p>
-          A definite integral <code>∫ f(x) dx</code> measures accumulation. If <code>f(x)</code> is positive,
-          the accumulation increases; if <code>f(x)</code> is negative, the accumulation decreases.
-          That behavior matches “positive area” and “negative area”.
-        </p>
-      </div>
-
-      <h2>2) The definite integral as net area</h2>
-      <p>
-        For a continuous function <code>f</code> on <code>[a,b]</code>, the definite integral
-        <code>∫<sub>a</sub><sup>b</sup> f(x) dx</code> equals the net area between the graph of <code>f</code> and the x-axis
-        from <code>x=a</code> to <code>x=b</code>.
-      </p>
-
-      <div class="twoCol">
-        <div class="card">
-          <h3>Above the x-axis</h3>
-          <p>
-            If <code>f(x) ≥ 0</code> on <code>[a,b]</code>, then
-            <code>∫<sub>a</sub><sup>b</sup> f(x) dx</code> equals the usual geometric area.
-          </p>
-        </div>
-        <div class="card">
-          <h3>Below the x-axis</h3>
-          <p>
-            If <code>f(x) ≤ 0</code> on <code>[a,b]</code>, then
-            <code>∫<sub>a</sub><sup>b</sup> f(x) dx</code> is <em>negative</em> and equals
-            minus the geometric area.
-          </p>
-        </div>
-      </div>
-
-      <div class="panel panel--warn">
-        <h3>Important: net area vs total area</h3>
-        <p>
-          The integral gives <strong>net</strong> area.
-          If you want <strong>total area</strong> (always positive), you usually compute
-          <code>∫<sub>a</sub><sup>b</sup> |f(x)| dx</code> or split into pieces and add geometric areas.
-        </p>
-      </div>
-
-      <h2>3) How to compute net area from a graph (practical method)</h2>
-      <ol class="steps">
-        <li>
-          <strong>Mark the interval</strong> on the x-axis: from <code>a</code> to <code>b</code>.
-        </li>
-        <li>
-          <strong>Find x-intercepts</strong> of the function (where it crosses the x-axis).
-          These are points where the sign of <code>f(x)</code> can change.
-        </li>
-        <li>
-          <strong>Split the integral</strong> at each intercept:
-          <code>∫<sub>a</sub><sup>b</sup> f(x)dx = ∫<sub>a</sub><sup>c</sup> f(x)dx + ∫<sub>c</sub><sup>b</sup> f(x)dx</code>
-          (and continue if there are more intercepts).
-        </li>
-        <li>
-          <strong>Compute each piece</strong>. Pieces above the axis contribute positive values; pieces below contribute negative values.
-        </li>
-        <li>
-          <strong>Add them</strong> to get the net (signed) total.
-        </li>
-      </ol>
-    </section>
-
-    <!-- EXAMPLES -->
-    <section id="examples" class="section">
-      <h2>4) Worked examples (net area)</h2>
-
-      <div class="example">
-        <h3>Example A: One region above the axis</h3>
-        <p>
-          Compute <code>∫<sub>0</sub><sup>2</sup> x dx</code>.
-          The graph <code>y = x</code> is above the x-axis on <code>[0,2]</code>.
-        </p>
-        <div class="mathBlock">
-          <div><code>∫<sub>0</sub><sup>2</sup> x dx = [x²/2]<sub>0</sub><sup>2</sup> = (4/2) - 0 = 2</code></div>
-        </div>
-        <p class="note">
-          Interpretation: net area = geometric area = 2.
-        </p>
-      </div>
-
-      <div class="example">
-        <h3>Example B: One region below the axis</h3>
-        <p>
-          Compute <code>∫<sub>0</sub><sup>2</sup> (-x) dx</code>.
-          The graph <code>y = -x</code> is below the x-axis on <code>[0,2]</code>.
-        </p>
-        <div class="mathBlock">
-          <div><code>∫<sub>0</sub><sup>2</sup> (-x) dx = [-x²/2]<sub>0</sub><sup>2</sup> = -(4/2) - 0 = -2</code></div>
-        </div>
-        <p class="note">
-          Interpretation: net area is negative because the region is below the axis.
-        </p>
-      </div>
-
-      <div class="example">
-        <h3>Example C: Crosses the axis (split into pieces)</h3>
-        <p>
-          Compute <code>∫<sub>-1</sub><sup>2</sup> (x-1) dx</code>.
-          The function <code>f(x)=x-1</code> crosses the x-axis at <code>x=1</code>.
-        </p>
-        <div class="mathBlock">
-          <div><code>∫<sub>-1</sub><sup>2</sup> (x-1) dx = ∫<sub>-1</sub><sup>1</sup> (x-1) dx + ∫<sub>1</sub><sup>2</sup> (x-1) dx</code></div>
-          <div><code>= [x²/2 - x]<sub>-1</sub><sup>1</sup> + [x²/2 - x]<sub>1</sub><sup>2</sup></code></div>
-          <div><code>= ((1/2 - 1) - (1/2 + 1)) + ((2 - 2) - (1/2 - 1))</code></div>
-          <div><code>= (-1/2 - 3/2) + (0 - (-1/2)) = (-2) + (1/2) = -3/2</code></div>
-        </div>
-        <p class="note">
-          Net area is negative overall, meaning “more area” lies below the x-axis than above it.
-        </p>
-      </div>
-
-      <div class="panel panel--tip">
-        <h3>Quick self-check</h3>
-        <ul>
-          <li>If the graph is mostly below the x-axis on the interval, the integral should be negative.</li>
-          <li>If the graph is symmetric above and below (equal magnitudes), the net area may be 0.</li>
-          <li>If you want total area, use <code>|f(x)|</code> (absolute value), not <code>f(x)</code>.</li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- DEMO -->
-    <section id="demo" class="section">
-      <h2>5) Interactive net-area demo</h2>
-      <p>
-        Choose a function, pick an interval, and this demo will compute:
-        <strong>net area</strong> (<code>∫ f(x) dx</code>) and
-        <strong>total area</strong> (<code>∫ |f(x)| dx</code> approximated).
-        This is meant to build intuition, not replace exact algebra.
-      </p>
-
-      <div class="demo">
-        <div class="demo__controls">
-          <label>
-            Function
-            <select id="fn">
-              <option value="x-1">f(x) = x − 1</option>
-              <option value="sin">f(x) = sin(x)</option>
-              <option value="quad">f(x) = x² − 1</option>
-              <option value="negabs">f(x) = −|x| + 1</option>
-            </select>
-          </label>
-
-          <div class="rangeRow">
-            <label>
-              a:
-              <input id="a" type="number" step="0.5" value="-1"/>
-            </label>
-            <label>
-              b:
-              <input id="b" type="number" step="0.5" value="2"/>
-            </label>
-          </div>
-
-          <label>
-            Resolution (more = smoother)
-            <input id="n" type="range" min="50" max="1200" value="400"/>
-          </label>
-
-          <button id="compute" class="btn">Compute</button>
-
-          <div class="demo__results" aria-live="polite">
-            <div class="resultLine">
-              <span class="resultLabel">Net area (≈)</span>
-              <span id="net" class="resultValue">—</span>
-            </div>
-            <div class="resultLine">
-              <span class="resultLabel">Total area (≈)</span>
-              <span id="total" class="resultValue">—</span>
-            </div>
-          </div>
-
-          <div class="demo__hint">
-            Tip: If your net area is near 0, it may mean the positive and negative parts cancel out.
-          </div>
-        </div>
-
-        <div class="demo__canvasWrap">
-          <canvas id="plot" width="720" height="420" aria-label="Graph plot canvas"></canvas>
-          <div class="demo__legend">
-            <span class="legend legend--pos">above axis = +</span>
-            <span class="legend legend--neg">below axis = −</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SUMMARY -->
-    <section id="summary" class="section">
-      <h2>Summary</h2>
-      <ul>
-        <li><strong>Definite integrals</strong> represent accumulation and equal <strong>net (signed) area</strong> from <code>a</code> to <code>b</code>.</li>
-        <li>Regions above the x-axis contribute <strong>positive</strong> area; below contribute <strong>negative</strong> area.</li>
-        <li>When a graph crosses the x-axis, split the integral at the intercept(s).</li>
-        <li>If you want <strong>total area</strong>, compute <code>∫ |f(x)| dx</code> (or split and add magnitudes).</li>
-      </ul>
-
-      <div class="footer">
-        <a class="btn btn--ghost" href="#sceneSection">Back to top</a>
-      </div>
-    </section>
-  </main>
-
-  <script src="app.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
