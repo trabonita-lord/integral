@@ -1,233 +1,268 @@
-// app.js — animations + interactive net-area demo (approximation)
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // --- Visual Architect Graph ---
+    const drawMainGraph = () => {
+        const canvas = document.getElementById('main-graph');
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+        
+        ctx.clearRect(0, 0, width, height);
+        
+        // Grid setup
+        const scaleX = width / 6; // Range -1 to 5
+        const scaleY = height / 10; // Range -6 to 4
+        const originX = 1 * scaleX;
+        const originY = 6 * scaleY;
+        
+        // Draw axes
+        ctx.beginPath();
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 1;
+        // X-axis
+        ctx.moveTo(0, originY);
+        ctx.lineTo(width, originY);
+        // Y-axis
+        ctx.moveTo(originX, 0);
+        ctx.lineTo(originX, height);
+        ctx.stroke();
+        
+        // Function f(x) = 2x - 4
+        const f = (x) => 2 * x - 4;
+        
+        // Draw Fill Areas
+        ctx.beginPath();
+        ctx.moveTo(originX, originY); // (0,0)
+        ctx.lineTo(originX + 2 * scaleX, originY); // (2,0)
+        ctx.lineTo(originX, originY - f(0) * scaleY); // (0, -4)
+        ctx.fillStyle = 'rgba(255, 64, 64, 0.4)';
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.moveTo(originX + 2 * scaleX, originY); // (2,0)
+        ctx.lineTo(originX + 4 * scaleX, originY); // (4,0)
+        ctx.lineTo(originX + 4 * scaleX, originY - f(4) * scaleY); // (4, 4)
+        ctx.fillStyle = 'rgba(0, 255, 128, 0.4)';
+        ctx.fill();
 
-/* =============== Scroll reveal =============== */
-const sections = document.querySelectorAll(".section");
-const io = new IntersectionObserver(
-  (entries) => {
-    for (const e of entries) {
-      if (e.isIntersecting) e.target.classList.add("in");
-    }
-  },
-  { threshold: 0.12 }
-);
-sections.forEach((s) => io.observe(s));
+        // Draw Line
+        ctx.beginPath();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 3;
+        ctx.moveTo(originX + 0 * scaleX, originY - f(0) * scaleY);
+        ctx.lineTo(originX + 4 * scaleX, originY - f(4) * scaleY);
+        ctx.stroke();
+        
+        // Labels
+        ctx.fillStyle = '#00d2ff';
+        ctx.font = '16px sans-serif';
+        ctx.fillText('f(x) = 2x - 4', width - 120, 30);
+        ctx.fillStyle = '#fff';
+        ctx.fillText('x=0', originX - 30, originY + 20);
+        ctx.fillText('x=4', originX + 4 * scaleX - 15, originY + 20);
+    };
+    drawMainGraph();
 
-/* =============== Scene: rays + particles =============== */
-const scene = document.getElementById("scene");
-if (scene) {
-  // Rays
-  for (let i = 0; i < 11; i++) {
-    const ray = document.createElement("div");
-    ray.className = "ray";
-    ray.style.left = `${Math.random() * 110 - 5}%`;
-    ray.style.animationDelay = `${Math.random() * 4}s`;
-    ray.style.animationDuration = `${5 + Math.random() * 7}s`;
-    scene.appendChild(ray);
-  }
-  // Particles
-  for (let i = 0; i < 42; i++) {
-    const p = document.createElement("div");
-    p.className = "particle";
-    p.style.left = `${Math.random() * 100}%`;
-    p.style.top = `${55 + Math.random() * 55}%`; // mostly underwater
-    p.style.animationDelay = `${Math.random() * 6}s`;
-    p.style.animationDuration = `${6 + Math.random() * 10}s`;
-    scene.appendChild(p);
-  }
-}
+    // --- Interactive Intercept Finder ---
+    const setupInterceptActivity = () => {
+        const canvas = document.getElementById('intercept-canvas');
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+        const feedback = document.getElementById('intercept-feedback');
+        const geoExp = document.getElementById('geometry-explanation');
+        
+        const scaleX = width / 5; // x from 0 to 5
+        const originY = height / 2; // y=0 in middle
+        
+        // Draw Axis
+        const drawAxes = () => {
+            ctx.clearRect(0, 0, width, height);
+            ctx.beginPath();
+            ctx.strokeStyle = '#00d2ff';
+            ctx.lineWidth = 2;
+            ctx.moveTo(0, originY);
+            ctx.lineTo(width, originY);
+            ctx.stroke();
+            
+            // Ticks
+            ctx.fillStyle = '#fff';
+            ctx.font = '14px sans-serif';
+            for(let i=0; i<=5; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i*scaleX, originY - 5);
+                ctx.lineTo(i*scaleX, originY + 5);
+                ctx.stroke();
+                ctx.fillText(i, i*scaleX + 5, originY - 10);
+            }
+            
+            // Draw Line roughly
+            ctx.beginPath();
+            ctx.strokeStyle = '#8b5cf6';
+            ctx.lineWidth = 3;
+            // f(x) = 2x - 4. 
+            // x=0 -> y=-4 (bottom of canvas)
+            // x=2 -> y=0 (middle)
+            // x=4 -> y=4 (top)
+            ctx.moveTo(0, height);
+            ctx.lineTo(4 * scaleX, 0); 
+            ctx.stroke();
+        };
+        drawAxes();
+        
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            
+            // Convert x to graph units
+            const graphX = x / scaleX;
+            
+            // Target is x=2
+            if (Math.abs(graphX - 2) < 0.3) {
+                feedback.textContent = "Correct! The line crosses exactly at x = 2.";
+                feedback.className = "feedback success";
+                geoExp.classList.remove('hidden');
+                
+                // Draw point
+                drawAxes();
+                ctx.beginPath();
+                ctx.arc(2 * scaleX, originY, 6, 0, Math.PI * 2);
+                ctx.fillStyle = '#00ff80';
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.stroke();
+            } else {
+                feedback.textContent = "Not quite. Look where the purple line intersects the blue x-axis.";
+                feedback.className = "feedback error";
+            }
+        });
+    };
+    setupInterceptActivity();
 
-/* =============== Net area demo =============== */
-const fnSel = document.getElementById("fn");
-const aIn = document.getElementById("a");
-const bIn = document.getElementById("b");
-const nIn = document.getElementById("n");
-const btn = document.getElementById("compute");
-const netOut = document.getElementById("net");
-const totalOut = document.getElementById("total");
-const canvas = document.getElementById("plot");
-const ctx = canvas?.getContext("2d");
+    // --- Step-by-Step Reveal ---
+    let currentStep = 0;
+    const maxSteps = 3;
+    const btnNext = document.getElementById('btn-next-step');
+    const btnReset = document.getElementById('btn-reset-steps');
+    
+    btnNext.addEventListener('click', () => {
+        if (currentStep < maxSteps) {
+            currentStep++;
+            document.getElementById(`step${currentStep}`).classList.remove('hidden');
+        }
+        if (currentStep === maxSteps) {
+            btnNext.disabled = true;
+            btnNext.style.opacity = 0.5;
+        }
+    });
+    
+    btnReset.addEventListener('click', () => {
+        for (let i = 1; i <= maxSteps; i++) {
+            document.getElementById(`step${i}`).classList.add('hidden');
+        }
+        currentStep = 0;
+        btnNext.disabled = false;
+        btnNext.style.opacity = 1;
+    });
 
-function fFactory(kind) {
-  if (kind === "x-1") return (x) => x - 1;
-  if (kind === "sin") return (x) => Math.sin(x);
-  if (kind === "quad") return (x) => x * x - 1;
-  if (kind === "negabs") return (x) => -Math.abs(x) + 1;
-  return (x) => x - 1;
-}
+    // --- Interactive Graphing Demo ---
+    const drawDemo = () => {
+        const canvas = document.getElementById('demo-canvas');
+        const ctx = canvas.getContext('2d');
+        const funcType = document.getElementById('func-select').value;
+        const width = canvas.width;
+        const height = canvas.height;
+        
+        ctx.clearRect(0, 0, width, height);
+        
+        let f, minX, maxX, minY, maxY, step, netA, totA;
+        
+        if (funcType === 'linear') {
+            f = x => 2*x - 4;
+            minX = 0; maxX = 4; minY = -5; maxY = 5;
+            netA = 0; totA = 8;
+        } else if (funcType === 'sine') {
+            f = x => Math.sin(x);
+            minX = 0; maxX = 2*Math.PI; minY = -1.5; maxY = 1.5;
+            netA = 0; totA = 4;
+        } else if (funcType === 'cubic') {
+            f = x => x*x*x - x;
+            minX = -1; maxX = 1; minY = -1; maxY = 1;
+            netA = 0; totA = 0.5; // |-0.25| + |0.25|
+        }
+        
+        document.getElementById('stat-net').textContent = netA.toFixed(2);
+        document.getElementById('stat-total').textContent = totA.toFixed(2);
+        
+        const scaleX = width / (maxX - minX + 1); // Padding
+        const scaleY = height / (maxY - minY);
+        const originX = (0 - minX + 0.5) * scaleX;
+        const originY = height - (0 - minY) * scaleY;
+        
+        // Draw Axis
+        ctx.beginPath();
+        ctx.strokeStyle = '#475569';
+        ctx.moveTo(0, originY);
+        ctx.lineTo(width, originY);
+        ctx.moveTo(originX, 0);
+        ctx.lineTo(originX, height);
+        ctx.stroke();
+        
+        // Fill Area numerically
+        step = (maxX - minX) / 200;
+        for (let x = minX; x <= maxX; x += step) {
+            const y = f(x);
+            const nextY = f(x + step);
+            
+            ctx.beginPath();
+            ctx.moveTo(originX + x * scaleX, originY);
+            ctx.lineTo(originX + x * scaleX, originY - y * scaleY);
+            ctx.lineTo(originX + (x + step) * scaleX, originY - nextY * scaleY);
+            ctx.lineTo(originX + (x + step) * scaleX, originY);
+            
+            if (y >= 0) {
+                ctx.fillStyle = 'rgba(0, 255, 128, 0.4)';
+            } else {
+                ctx.fillStyle = 'rgba(255, 64, 64, 0.4)';
+            }
+            ctx.fill();
+        }
+        
+        // Draw Curve
+        ctx.beginPath();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        for (let x = minX; x <= maxX; x += step) {
+            const y = f(x);
+            const cx = originX + x * scaleX;
+            const cy = originY - y * scaleY;
+            if (x === minX) ctx.moveTo(cx, cy);
+            else ctx.lineTo(cx, cy);
+        }
+        ctx.stroke();
+    };
+    
+    document.getElementById('func-select').addEventListener('change', drawDemo);
+    drawDemo(); // Init
 
-function clampSwapInterval(a, b) {
-  if (!Number.isFinite(a)) a = -1;
-  if (!Number.isFinite(b)) b = 2;
-  if (a === b) b = a + 1;
-  if (a > b) [a, b] = [b, a];
-  return [a, b];
-}
-
-// Trapezoidal rule for integral approximation
-function trapz(g, a, b, n) {
-  const h = (b - a) / n;
-  let sum = 0.5 * (g(a) + g(b));
-  for (let i = 1; i < n; i++) {
-    sum += g(a + i * h);
-  }
-  return sum * h;
-}
-
-function niceNumber(x) {
-  // small formatting helper
-  if (!Number.isFinite(x)) return "—";
-  const ax = Math.abs(x);
-  if (ax >= 1000) return x.toFixed(0);
-  if (ax >= 10) return x.toFixed(3);
-  if (ax >= 1) return x.toFixed(4);
-  return x.toFixed(6);
-}
-
-function drawPlot(g, a, b, n) {
-  if (!ctx || !canvas) return;
-
-  const W = canvas.width;
-  const H = canvas.height;
-  ctx.clearRect(0, 0, W, H);
-
-  // sample points
-  const xs = [];
-  const ys = [];
-  const h = (b - a) / n;
-  for (let i = 0; i <= n; i++) {
-    const x = a + i * h;
-    const y = g(x);
-    xs.push(x);
-    ys.push(y);
-  }
-
-  // determine y-range with padding
-  let ymin = Math.min(...ys);
-  let ymax = Math.max(...ys);
-  if (ymin === ymax) { ymin -= 1; ymax += 1; }
-  const pad = 0.12 * (ymax - ymin);
-  ymin -= pad; ymax += pad;
-
-  // transforms
-  const xToPx = (x) => ((x - a) / (b - a)) * (W - 60) + 40;
-  const yToPx = (y) => (H - 35) - ((y - ymin) / (ymax - ymin)) * (H - 60);
-
-  // background grid
-  ctx.save();
-  ctx.fillStyle = "rgba(0,0,0,0.10)";
-  ctx.fillRect(0, 0, W, H);
-
-  ctx.strokeStyle = "rgba(255,255,255,0.10)";
-  ctx.lineWidth = 1;
-  for (let i = 0; i <= 8; i++) {
-    const yy = 20 + (i / 8) * (H - 40);
-    ctx.beginPath();
-    ctx.moveTo(20, yy);
-    ctx.lineTo(W - 20, yy);
-    ctx.stroke();
-  }
-  for (let i = 0; i <= 10; i++) {
-    const xx = 20 + (i / 10) * (W - 40);
-    ctx.beginPath();
-    ctx.moveTo(xx, 20);
-    ctx.lineTo(xx, H - 20);
-    ctx.stroke();
-  }
-
-  // axis (y=0)
-  const y0 = yToPx(0);
-  ctx.strokeStyle = "rgba(125,249,255,0.75)";
-  ctx.shadowColor = "rgba(125,249,255,0.35)";
-  ctx.shadowBlur = 12;
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(20, y0);
-  ctx.lineTo(W - 20, y0);
-  ctx.stroke();
-  ctx.shadowBlur = 0;
-
-  // Fill trapezoids: green for above, red for below
-  for (let i = 0; i < n; i++) {
-    const x1 = xs[i], x2 = xs[i + 1];
-    const y1 = ys[i], y2 = ys[i + 1];
-
-    // polygon points for the trapezoid down/up to the x-axis
-    const px1 = xToPx(x1), px2 = xToPx(x2);
-    const py1 = yToPx(y1), py2 = yToPx(y2);
-    const py0 = yToPx(0);
-
-    // decide color based on average sign
-    const avg = (y1 + y2) / 2;
-    const isPos = avg >= 0;
-
-    ctx.beginPath();
-    ctx.moveTo(px1, py0);
-    ctx.lineTo(px1, py1);
-    ctx.lineTo(px2, py2);
-    ctx.lineTo(px2, py0);
-    ctx.closePath();
-
-    ctx.fillStyle = isPos ? "rgba(43,255,154,0.18)" : "rgba(255,60,60,0.18)";
-    ctx.fill();
-
-    // subtle outline
-    ctx.strokeStyle = isPos ? "rgba(43,255,154,0.14)" : "rgba(255,60,60,0.14)";
-    ctx.lineWidth = 1;
-    ctx.stroke();
-  }
-
-  // curve
-  ctx.strokeStyle = "rgba(255,255,255,0.88)";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  for (let i = 0; i <= n; i++) {
-    const px = xToPx(xs[i]);
-    const py = yToPx(ys[i]);
-    if (i === 0) ctx.moveTo(px, py);
-    else ctx.lineTo(px, py);
-  }
-  ctx.stroke();
-
-  // labels
-  ctx.fillStyle = "rgba(255,255,255,0.80)";
-  ctx.font = "12px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, monospace";
-  ctx.fillText(`x ∈ [${a}, ${b}]`, 18, 18);
-  ctx.fillText(`y-range ≈ [${niceNumber(ymin)}, ${niceNumber(ymax)}]`, 18, H - 10);
-
-  ctx.restore();
-}
-
-function compute() {
-  const kind = fnSel?.value ?? "x-1";
-  const g = fFactory(kind);
-
-  let a = parseFloat(aIn?.value ?? "-1");
-  let b = parseFloat(bIn?.value ?? "2");
-  const n = Math.max(20, Math.min(5000, parseInt(nIn?.value ?? "400", 10)));
-
-  [a, b] = clampSwapInterval(a, b);
-
-  // net area ≈ ∫ f(x) dx
-  const net = trapz(g, a, b, n);
-
-  // total area ≈ ∫ |f(x)| dx
-  const total = trapz((x) => Math.abs(g(x)), a, b, n);
-
-  if (netOut) netOut.textContent = niceNumber(net);
-  if (totalOut) totalOut.textContent = niceNumber(total);
-
-  drawPlot(g, a, b, Math.min(n, 600));
-}
-
-// Hook up events
-btn?.addEventListener("click", compute);
-fnSel?.addEventListener("change", compute);
-[aIn, bIn].forEach((el) => el?.addEventListener("change", compute));
-nIn?.addEventListener("input", () => {
-  // don’t spam heavy compute while dragging; do a light redraw
-  // but still update results for responsiveness
-  compute();
+    // --- Quiz Logic ---
+    const btnSubmitQuiz = document.getElementById('btn-submit-quiz');
+    const quizFeedback = document.getElementById('quiz-feedback');
+    
+    btnSubmitQuiz.addEventListener('click', () => {
+        const selected = document.querySelector('input[name="q1"]:checked');
+        if (!selected) {
+            quizFeedback.textContent = "Please select an answer.";
+            quizFeedback.className = "feedback";
+            return;
+        }
+        
+        if (selected.value === 'correct') {
+            quizFeedback.textContent = "Correct! The negative 'icebergs' outline a larger area than the positive 'mountains'.";
+            quizFeedback.className = "feedback success";
+        } else {
+            quizFeedback.textContent = "Not quite. Remember, definite integrals compute NET area, not total area or math errors. Try again!";
+            quizFeedback.className = "feedback error";
+        }
+    });
 });
-
-// initial
-compute();
