@@ -1,6 +1,103 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- Visual Architect Graph ---
+    // --- Grid Drawing Utility ---
+    const drawGrid = (ctx, width, height, originX, originY, scaleX, scaleY) => {
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+        ctx.lineWidth = 1;
+        // Verticals
+        for(let x = 0; x < width; x += scaleX) {
+            ctx.moveTo(x, 0); ctx.lineTo(x, height);
+        }
+        // Horizontals
+        for(let y = 0; y < height; y += scaleY) {
+            ctx.moveTo(0, y); ctx.lineTo(width, y);
+        }
+        ctx.stroke();
+
+        // Axes
+        ctx.beginPath();
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 2;
+        ctx.moveTo(0, originY); ctx.lineTo(width, originY); // X
+        ctx.moveTo(originX, 0); ctx.lineTo(originX, height); // Y
+        ctx.stroke();
+    };
+
+    // --- Riemann Sum Animation ---
+    const drawRiemannAnimation = () => {
+        const canvas = document.getElementById('riemann-canvas');
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+        let animationFrame;
+        let rectCount = 2;
+        const maxRects = 40;
+        
+        const f = (x) => 2 * x - 4;
+        const scaleX = width / 6;
+        const scaleY = height / 10;
+        const originX = 1 * scaleX;
+        const originY = 6 * scaleY;
+
+        const renderFrame = () => {
+            ctx.clearRect(0, 0, width, height);
+            drawGrid(ctx, width, height, originX, originY, scaleX, scaleY);
+
+            // Draw Rectangles
+            const rectWidth = 4 / rectCount;
+            for(let i = 0; i < rectCount; i++) {
+                const x = 0 + (i * rectWidth); // start at x=0
+                // Use right endpoint for height
+                const y = f(x + rectWidth); 
+                
+                const px = originX + (x * scaleX);
+                const py = originY;
+                const pWidth = rectWidth * scaleX;
+                const pHeight = -y * scaleY;
+
+                ctx.beginPath();
+                ctx.rect(px, py, pWidth, pHeight);
+                ctx.fillStyle = y >= 0 ? 'rgba(0, 255, 128, 0.3)' : 'rgba(255, 64, 64, 0.3)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+
+            // Draw Curve
+            ctx.beginPath();
+            ctx.strokeStyle = '#8b5cf6';
+            ctx.lineWidth = 3;
+            ctx.moveTo(originX, originY - f(0) * scaleY);
+            ctx.lineTo(originX + 4 * scaleX, originY - f(4) * scaleY);
+            ctx.stroke();
+
+            // Text
+            ctx.fillStyle = '#fff';
+            ctx.font = '14px sans-serif';
+            ctx.fillText(`Rectangles: ${Math.floor(rectCount)}`, 20, 30);
+        };
+
+        renderFrame(); // initial draw
+
+        document.getElementById('btn-animate-riemann').addEventListener('click', () => {
+            rectCount = 2;
+            cancelAnimationFrame(animationFrame);
+            
+            const animate = () => {
+                rectCount += 0.5; // speed
+                renderFrame();
+                if(rectCount < maxRects) {
+                    animationFrame = requestAnimationFrame(animate);
+                }
+            };
+            animate();
+        });
+    };
+    drawRiemannAnimation();
+
+    // --- Visual Architect Main Graph ---
     const drawMainGraph = () => {
         const canvas = document.getElementById('main-graph');
         const ctx = canvas.getContext('2d');
@@ -9,56 +106,44 @@ document.addEventListener('DOMContentLoaded', () => {
         
         ctx.clearRect(0, 0, width, height);
         
-        // Grid setup
-        const scaleX = width / 6; // Range -1 to 5
-        const scaleY = height / 10; // Range -6 to 4
+        const scaleX = width / 6; 
+        const scaleY = height / 10; 
         const originX = 1 * scaleX;
         const originY = 6 * scaleY;
         
-        // Draw axes
-        ctx.beginPath();
-        ctx.strokeStyle = '#475569';
-        ctx.lineWidth = 1;
-        // X-axis
-        ctx.moveTo(0, originY);
-        ctx.lineTo(width, originY);
-        // Y-axis
-        ctx.moveTo(originX, 0);
-        ctx.lineTo(originX, height);
-        ctx.stroke();
+        drawGrid(ctx, width, height, originX, originY, scaleX, scaleY);
         
-        // Function f(x) = 2x - 4
         const f = (x) => 2 * x - 4;
         
-        // Draw Fill Areas
+        // Iceberg Fill
         ctx.beginPath();
-        ctx.moveTo(originX, originY); // (0,0)
-        ctx.lineTo(originX + 2 * scaleX, originY); // (2,0)
-        ctx.lineTo(originX, originY - f(0) * scaleY); // (0, -4)
-        ctx.fillStyle = 'rgba(255, 64, 64, 0.4)';
+        ctx.moveTo(originX, originY);
+        ctx.lineTo(originX + 2 * scaleX, originY);
+        ctx.lineTo(originX, originY - f(0) * scaleY);
+        ctx.fillStyle = 'rgba(255, 64, 64, 0.5)';
         ctx.fill();
         
+        // Mountain Fill
         ctx.beginPath();
-        ctx.moveTo(originX + 2 * scaleX, originY); // (2,0)
-        ctx.lineTo(originX + 4 * scaleX, originY); // (4,0)
-        ctx.lineTo(originX + 4 * scaleX, originY - f(4) * scaleY); // (4, 4)
-        ctx.fillStyle = 'rgba(0, 255, 128, 0.4)';
+        ctx.moveTo(originX + 2 * scaleX, originY); 
+        ctx.lineTo(originX + 4 * scaleX, originY); 
+        ctx.lineTo(originX + 4 * scaleX, originY - f(4) * scaleY); 
+        ctx.fillStyle = 'rgba(0, 255, 128, 0.5)';
         ctx.fill();
 
-        // Draw Line
+        // Line
         ctx.beginPath();
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 3;
-        ctx.moveTo(originX + 0 * scaleX, originY - f(0) * scaleY);
+        ctx.strokeStyle = '#c4b5fd';
+        ctx.lineWidth = 4;
+        ctx.moveTo(originX, originY - f(0) * scaleY);
         ctx.lineTo(originX + 4 * scaleX, originY - f(4) * scaleY);
         ctx.stroke();
         
         // Labels
-        ctx.fillStyle = '#00d2ff';
-        ctx.font = '16px sans-serif';
-        ctx.fillText('f(x) = 2x - 4', width - 120, 30);
         ctx.fillStyle = '#fff';
+        ctx.font = '16px sans-serif';
         ctx.fillText('x=0', originX - 30, originY + 20);
+        ctx.fillText('x=2 (Intercept)', originX + 2 * scaleX - 40, originY - 10);
         ctx.fillText('x=4', originX + 4 * scaleX - 15, originY + 20);
     };
     drawMainGraph();
@@ -72,38 +157,38 @@ document.addEventListener('DOMContentLoaded', () => {
         const feedback = document.getElementById('intercept-feedback');
         const geoExp = document.getElementById('geometry-explanation');
         
-        const scaleX = width / 5; // x from 0 to 5
-        const originY = height / 2; // y=0 in middle
+        const scaleX = width / 5;
+        const originY = height / 2;
         
-        // Draw Axis
         const drawAxes = () => {
             ctx.clearRect(0, 0, width, height);
+            
+            // X-axis glow
+            ctx.shadowColor = '#00d2ff';
+            ctx.shadowBlur = 10;
             ctx.beginPath();
             ctx.strokeStyle = '#00d2ff';
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 3;
             ctx.moveTo(0, originY);
             ctx.lineTo(width, originY);
             ctx.stroke();
+            ctx.shadowBlur = 0; // reset
             
             // Ticks
-            ctx.fillStyle = '#fff';
+            ctx.fillStyle = '#94a3b8';
             ctx.font = '14px sans-serif';
             for(let i=0; i<=5; i++) {
                 ctx.beginPath();
-                ctx.moveTo(i*scaleX, originY - 5);
-                ctx.lineTo(i*scaleX, originY + 5);
+                ctx.moveTo(i*scaleX, originY - 8);
+                ctx.lineTo(i*scaleX, originY + 8);
                 ctx.stroke();
-                ctx.fillText(i, i*scaleX + 5, originY - 10);
+                ctx.fillText(i, i*scaleX + 8, originY - 15);
             }
             
             // Draw Line roughly
             ctx.beginPath();
             ctx.strokeStyle = '#8b5cf6';
-            ctx.lineWidth = 3;
-            // f(x) = 2x - 4. 
-            // x=0 -> y=-4 (bottom of canvas)
-            // x=2 -> y=0 (middle)
-            // x=4 -> y=4 (top)
+            ctx.lineWidth = 4;
             ctx.moveTo(0, height);
             ctx.lineTo(4 * scaleX, 0); 
             ctx.stroke();
@@ -112,27 +197,27 @@ document.addEventListener('DOMContentLoaded', () => {
         
         canvas.addEventListener('click', (e) => {
             const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
+            // Adjust for CSS scaling if necessary
+            const scaleFactor = canvas.width / rect.width;
+            const x = (e.clientX - rect.left) * scaleFactor;
             
-            // Convert x to graph units
             const graphX = x / scaleX;
             
-            // Target is x=2
-            if (Math.abs(graphX - 2) < 0.3) {
-                feedback.textContent = "Correct! The line crosses exactly at x = 2.";
+            if (Math.abs(graphX - 2) < 0.25) {
+                feedback.innerHTML = "🎯 <strong>Correct!</strong> The iceberg turns into a mountain exactly at x = 2.";
                 feedback.className = "feedback success";
                 geoExp.classList.remove('hidden');
                 
-                // Draw point
                 drawAxes();
                 ctx.beginPath();
-                ctx.arc(2 * scaleX, originY, 6, 0, Math.PI * 2);
+                ctx.arc(2 * scaleX, originY, 8, 0, Math.PI * 2);
                 ctx.fillStyle = '#00ff80';
                 ctx.fill();
                 ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
                 ctx.stroke();
             } else {
-                feedback.textContent = "Not quite. Look where the purple line intersects the blue x-axis.";
+                feedback.textContent = "Not quite. Look closely where the purple line crosses the glowing blue x-axis.";
                 feedback.className = "feedback error";
             }
         });
@@ -148,11 +233,15 @@ document.addEventListener('DOMContentLoaded', () => {
     btnNext.addEventListener('click', () => {
         if (currentStep < maxSteps) {
             currentStep++;
-            document.getElementById(`step${currentStep}`).classList.remove('hidden');
+            const stepEl = document.getElementById(`step${currentStep}`);
+            stepEl.classList.remove('hidden');
+            // Trigger reflow for animation
+            void stepEl.offsetWidth; 
         }
         if (currentStep === maxSteps) {
             btnNext.disabled = true;
             btnNext.style.opacity = 0.5;
+            btnNext.style.cursor = "not-allowed";
         }
     });
     
@@ -163,9 +252,10 @@ document.addEventListener('DOMContentLoaded', () => {
         currentStep = 0;
         btnNext.disabled = false;
         btnNext.style.opacity = 1;
+        btnNext.style.cursor = "pointer";
     });
 
-    // --- Interactive Graphing Demo ---
+    // --- Interactive Graphing Demo (Closer) ---
     const drawDemo = () => {
         const canvas = document.getElementById('demo-canvas');
         const ctx = canvas.getContext('2d');
@@ -187,28 +277,22 @@ document.addEventListener('DOMContentLoaded', () => {
             netA = 0; totA = 4;
         } else if (funcType === 'cubic') {
             f = x => x*x*x - x;
-            minX = -1; maxX = 1; minY = -1; maxY = 1;
-            netA = 0; totA = 0.5; // |-0.25| + |0.25|
+            minX = -1.2; maxX = 1.2; minY = -1; maxY = 1;
+            netA = 0; totA = 0.5; // Area of x^3-x on [-1,1]
         }
         
+        // Animate numbers counting up
         document.getElementById('stat-net').textContent = netA.toFixed(2);
         document.getElementById('stat-total').textContent = totA.toFixed(2);
         
-        const scaleX = width / (maxX - minX + 1); // Padding
-        const scaleY = height / (maxY - minY);
+        const scaleX = width / (maxX - minX + 1);
+        const scaleY = height / (maxY - minY + 0.5);
         const originX = (0 - minX + 0.5) * scaleX;
-        const originY = height - (0 - minY) * scaleY;
+        const originY = height - (0 - minY + 0.25) * scaleY;
         
-        // Draw Axis
-        ctx.beginPath();
-        ctx.strokeStyle = '#475569';
-        ctx.moveTo(0, originY);
-        ctx.lineTo(width, originY);
-        ctx.moveTo(originX, 0);
-        ctx.lineTo(originX, height);
-        ctx.stroke();
+        drawGrid(ctx, width, height, originX, originY, scaleX, scaleY);
         
-        // Fill Area numerically
+        // Fill Area
         step = (maxX - minX) / 200;
         for (let x = minX; x <= maxX; x += step) {
             const y = f(x);
@@ -231,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Draw Curve
         ctx.beginPath();
         ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 3;
         for (let x = minX; x <= maxX; x += step) {
             const y = f(x);
             const cx = originX + x * scaleX;
@@ -252,16 +336,16 @@ document.addEventListener('DOMContentLoaded', () => {
     btnSubmitQuiz.addEventListener('click', () => {
         const selected = document.querySelector('input[name="q1"]:checked');
         if (!selected) {
-            quizFeedback.textContent = "Please select an answer.";
+            quizFeedback.textContent = "Please select an answer first.";
             quizFeedback.className = "feedback";
             return;
         }
         
         if (selected.value === 'correct') {
-            quizFeedback.textContent = "Correct! The negative 'icebergs' outline a larger area than the positive 'mountains'.";
+            quizFeedback.innerHTML = "✅ <strong>Spot on!</strong> The negative 'icebergs' outline a larger physical area than the positive 'mountains', pulling the net total below zero.";
             quizFeedback.className = "feedback success";
         } else {
-            quizFeedback.textContent = "Not quite. Remember, definite integrals compute NET area, not total area or math errors. Try again!";
+            quizFeedback.innerHTML = "❌ <strong>Not quite.</strong> Remember the waterline analogy: Integrals compute NET area. If the net is negative, the icebergs are bigger than the mountains.";
             quizFeedback.className = "feedback error";
         }
     });
