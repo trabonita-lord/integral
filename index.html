@@ -9,6 +9,7 @@
 <body>
     <header class="hero">
         <div class="hero-content">
+            <div class="badge">Interactive Calculus Lesson</div>
             <h1>Net Area & Definite Integrals</h1>
             <p>Calculus visually explained: Mountains, Icebergs, and the Waterline.</p>
         </div>
@@ -16,150 +17,198 @@
             <svg viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
                 <defs>
                     <filter id="glow-green" x="-20%" y="-20%" width="140%" height="140%">
-                        <feGaussianBlur stdDeviation="8" result="blur" />
+                        <feGaussianBlur stdDeviation="10" result="blur" />
                         <feComposite in="SourceGraphic" in2="blur" operator="over" />
                     </filter>
                     <filter id="glow-red" x="-20%" y="-20%" width="140%" height="140%">
-                        <feGaussianBlur stdDeviation="8" result="blur" />
+                        <feGaussianBlur stdDeviation="10" result="blur" />
                         <feComposite in="SourceGraphic" in2="blur" operator="over" />
                     </filter>
                     <filter id="glow-blue">
-                        <feGaussianBlur stdDeviation="4" result="blur" />
+                        <feGaussianBlur stdDeviation="5" result="blur" />
                         <feComposite in="SourceGraphic" in2="blur" operator="over" />
                     </filter>
+                    <linearGradient id="grad-green" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="rgba(0, 255, 128, 0.7)" />
+                        <stop offset="100%" stop-color="rgba(0, 255, 128, 0.1)" />
+                    </linearGradient>
+                    <linearGradient id="grad-red" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="rgba(255, 64, 64, 0.1)" />
+                        <stop offset="100%" stop-color="rgba(255, 64, 64, 0.7)" />
+                    </linearGradient>
                 </defs>
                 <!-- Waterline (x-axis) -->
                 <line x1="0" y1="200" x2="800" y2="200" stroke="#00d2ff" stroke-width="4" filter="url(#glow-blue)" />
                 <!-- Mountain (Positive Area) -->
-                <path d="M 400 200 L 600 50 L 800 200 Z" fill="rgba(0, 255, 128, 0.4)" stroke="#00ff80" stroke-width="3" filter="url(#glow-green)" />
+                <path d="M 400 200 L 600 50 L 800 200 Z" fill="url(#grad-green)" stroke="#00ff80" stroke-width="3" filter="url(#glow-green)" />
                 <!-- Iceberg (Negative Area) -->
-                <path d="M 0 200 L 200 350 L 400 200 Z" fill="rgba(255, 64, 64, 0.4)" stroke="#ff4040" stroke-width="3" filter="url(#glow-red)" />
-                <text x="560" y="140" fill="#00ff80" font-size="24" font-weight="bold">+ Area (Mountain)</text>
-                <text x="160" y="280" fill="#ff4040" font-size="24" font-weight="bold">- Area (Iceberg)</text>
+                <path d="M 0 200 L 200 350 L 400 200 Z" fill="url(#grad-red)" stroke="#ff4040" stroke-width="3" filter="url(#glow-red)" />
+                <!-- Grid Lines -->
+                <g stroke="rgba(255,255,255,0.1)" stroke-width="1">
+                    <line x1="200" y1="0" x2="200" y2="400" />
+                    <line x1="400" y1="0" x2="400" y2="400" />
+                    <line x1="600" y1="0" x2="600" y2="400" />
+                </g>
+                <text x="560" y="140" fill="#00ff80" font-size="24" font-weight="bold">+ Area (Positive)</text>
+                <text x="160" y="280" fill="#ff4040" font-size="24" font-weight="bold">- Area (Negative)</text>
                 <text x="20" y="190" fill="#00d2ff" font-size="20">Waterline (x-axis)</text>
             </svg>
         </div>
     </header>
 
     <main>
-        <section id="hook" class="presentation-section">
-            <div class="avatar concept-lead"></div>
-            <h2>Concept Lead (The Hook)</h2>
+        <section id="hook" class="presentation-section card">
+            <h2><span class="icon">🎯</span> Concept Lead (The Hook)</h2>
             <div class="content">
-                <p>Welcome to the world of Calculus! Have you ever wondered how to find the exact area of irregular shapes? We use <strong>Definite Integrals</strong>.</p>
-                <p>Think of the x-axis as the surface of the ocean. Areas above the water are positive "mountains". Areas below the water are negative "icebergs". <strong>Net Area</strong> is simply the mountains plus the icebergs.</p>
-                <p>The <strong>Fundamental Theorem of Calculus (FTC)</strong> is our magic key. It says: <br>
-                <span class="math-block">&int;<sub>a</sub><sup>b</sup> f(x) dx = F(b) - F(a)</span><br>
-                This means to find the exact area under a curve <em>f(x)</em> from <em>a</em> to <em>b</em>, we just find its antiderivative <em>F(x)</em> and subtract the start value from the end value!</p>
+                <p>Welcome to the world of Calculus! Have you ever wondered how to find the exact area of irregular, curved shapes? We use a tool called the <strong>Definite Integral</strong>.</p>
+                
+                <div class="info-box">
+                    <h3>The Waterline Analogy</h3>
+                    <p>Think of the x-axis as the surface of the ocean. Areas above the water are positive "mountains". Areas below the water are negative "icebergs". <strong>Net Area</strong> is simply the mountains added to the icebergs.</p>
+                </div>
+
+                <p>The <strong>Fundamental Theorem of Calculus (FTC)</strong> is our magic key. It connects derivatives (rates of change) to integrals (accumulation of area). It states:</p>
+                <div class="math-block">
+                    <span>&int;<sub>a</sub><sup>b</sup> f(x) dx = F(b) - F(a)</span>
+                </div>
+                <p><strong>What does this mean in plain English?</strong><br>
+                To find the exact area under a curve <em>f(x)</em> between two points <em>a</em> and <em>b</em>, we find its "parent function" (the antiderivative, <em>F(x)</em>). Then, we just plug in the end point <em>(b)</em>, plug in the start point <em>(a)</em>, and subtract them!</p>
             </div>
         </section>
 
-        <section id="grapher" class="presentation-section alt-bg">
-            <div class="avatar visual-architect"></div>
-            <h2>Visual Architect (The Grapher)</h2>
+        <section id="grapher" class="presentation-section card alt-bg">
+            <h2><span class="icon">📐</span> Visual Architect (The Grapher)</h2>
             <div class="content">
-                <p>Let's look at a completely original example. We will use the function <strong>f(x) = 2x - 4</strong> over the interval <strong>[0, 4]</strong>.</p>
-                <p>Notice how this line starts below the x-axis (underwater) and crosses over to become a mountain. Let's see it visually.</p>
+                <p>Let's look at a concrete example. We will use the linear function <strong>f(x) = 2x - 4</strong> over the interval from <strong>x = 0 to x = 4</strong>.</p>
+                <p>Before we calculate the exact area, let's see how Calculus actually builds that area. It does this by slicing the shape into tiny rectangles and adding them up (a process called a Riemann Sum). Watch the animation below:</p>
+                
                 <div class="interactive-container">
-                    <canvas id="main-graph" width="500" height="300"></canvas>
+                    <canvas id="riemann-canvas" width="600" height="250"></canvas>
+                    <button id="btn-animate-riemann" class="btn btn-small">Animate Rectangles</button>
+                </div>
+
+                <p>Notice how the line starts below the x-axis (an iceberg) and crosses over to become a mountain. Let's map this out perfectly.</p>
+                <div class="interactive-container">
+                    <canvas id="main-graph" width="600" height="300"></canvas>
                 </div>
             </div>
         </section>
 
-        <section id="analyzer" class="presentation-section">
-            <div class="avatar geometry-specialist"></div>
-            <h2>The Geometry Specialist (The Analyzer)</h2>
+        <section id="analyzer" class="presentation-section card">
+            <h2><span class="icon">🧮</span> The Geometry Specialist (The Analyzer)</h2>
             <div class="content">
-                <p>Because our function is a straight line, we can actually use basic geometry to find the area before we use calculus!</p>
-                <p>Looking at the graph, we have two triangles. To find the net area, we need to know exactly where the graph crosses the x-axis (the x-intercept) so we can split the shape.</p>
+                <p>Because our function is a straight line, it creates perfectly straight triangles. This means we can use basic geometry (Area = &frac12; &times; base &times; height) to find the area before we even touch calculus!</p>
+                <p>To find the net area, we must find the exact point where the graph crosses the x-axis. This is the <strong>x-intercept</strong>, the exact moment the iceberg turns into a mountain.</p>
                 
                 <div class="interactive-box">
                     <h3>Interactive: Find the Intercept</h3>
-                    <p>Click on the exact point on the x-axis below where the function f(x) = 2x - 4 crosses from negative to positive.</p>
+                    <p>Click on the exact point on the blue x-axis below where the purple function f(x) = 2x - 4 crosses from negative to positive.</p>
                     <div id="click-intercept-area">
-                        <canvas id="intercept-canvas" width="500" height="150"></canvas>
+                        <canvas id="intercept-canvas" width="600" height="200"></canvas>
                     </div>
                     <p id="intercept-feedback" class="feedback"></p>
                 </div>
                 
-                <div id="geometry-explanation" class="hidden">
-                    <p>Great! It crosses at <strong>x = 2</strong>. This gives us two triangles:</p>
-                    <ul>
-                        <li><strong>Iceberg Triangle [0, 2]:</strong> Base = 2, Height = -4. Area = &frac12; &times; 2 &times; (-4) = <strong>-4</strong></li>
-                        <li><strong>Mountain Triangle [2, 4]:</strong> Base = 2, Height = 4. Area = &frac12; &times; 2 &times; 4 = <strong>4</strong></li>
+                <div id="geometry-explanation" class="hidden glass-panel">
+                    <h3>Geometric Breakdown:</h3>
+                    <p>Excellent! The function crosses exactly at <strong>x = 2</strong>. This splits our shape into two distinct triangles:</p>
+                    <ul class="styled-list">
+                        <li><strong>Iceberg Triangle [from x=0 to x=2]:</strong> <br>Base = 2. Height is down to -4. <br>Area = &frac12; &times; 2 &times; (-4) = <strong>-4</strong></li>
+                        <li><strong>Mountain Triangle [from x=2 to x=4]:</strong> <br>Base = 2. Height is up to 4. <br>Area = &frac12; &times; 2 &times; 4 = <strong>4</strong></li>
                     </ul>
+                    <p><strong>Total Geometric Net Area:</strong> -4 (iceberg) + 4 (mountain) = <strong>0</strong>.</p>
                 </div>
             </div>
         </section>
 
-        <section id="solver" class="presentation-section alt-bg">
-            <div class="avatar calculator-expert"></div>
-            <h2>The Calculator (The Solver)</h2>
+        <section id="solver" class="presentation-section card alt-bg">
+            <h2><span class="icon">⚙️</span> The Calculator (The Solver)</h2>
             <div class="content">
-                <p>Now, let's prove the Geometry Specialist is correct by using the Fundamental Theorem of Calculus.</p>
-                <p>We want to evaluate: <strong>&int;<sub>0</sub><sup>4</sup> (2x - 4) dx</strong></p>
+                <p>Now, let's prove the Geometry Specialist is 100% correct by using the Fundamental Theorem of Calculus (FTC).</p>
+                <p>We need to evaluate the definite integral: <strong>&int;<sub>0</sub><sup>4</sup> (2x - 4) dx</strong></p>
                 
                 <div class="step-container">
                     <div class="step hidden" id="step1">
                         <p><strong>Step 1: Find the antiderivative, F(x).</strong></p>
-                        <p>The antiderivative of 2x is x&sup2;. The antiderivative of -4 is -4x.</p>
-                        <p class="math-block">F(x) = x&sup2; - 4x</p>
+                        <p>We need to find a function whose derivative is <em>2x - 4</em>.<br>
+                        The reverse power rule tells us the antiderivative of <em>2x</em> is <em>x&sup2;</em>. <br>
+                        The antiderivative of <em>-4</em> is <em>-4x</em>.</p>
+                        <div class="math-block">F(x) = x&sup2; - 4x</div>
                     </div>
                     <div class="step hidden" id="step2">
-                        <p><strong>Step 2: Evaluate F(b) - F(a). Here, b=4 and a=0.</strong></p>
-                        <p class="math-block">F(4) = (4)&sup2; - 4(4) = 16 - 16 = 0</p>
-                        <p class="math-block">F(0) = (0)&sup2; - 4(0) = 0 - 0 = 0</p>
+                        <p><strong>Step 2: Evaluate F(b) - F(a).</strong></p>
+                        <p>Our interval is from a=0 to b=4. We plug these into our new F(x).</p>
+                        <div class="math-block">
+                            Top bound (b=4): F(4) = (4)&sup2; - 4(4) = 16 - 16 = 0<br>
+                            Bottom bound (a=0): F(0) = (0)&sup2; - 4(0) = 0 - 0 = 0
+                        </div>
                     </div>
                     <div class="step hidden" id="step3">
                         <p><strong>Step 3: Calculate the final Net Area.</strong></p>
-                        <p class="math-block">F(4) - F(0) = 0 - 0 = 0</p>
-                        <p>The net area is 0! This matches our geometric calculation (-4 + 4 = 0).</p>
+                        <div class="math-block">Net Area = F(4) - F(0) = 0 - 0 = 0</div>
+                        <p>The net area is <strong>0</strong>! The calculus perfectly matches our geometric calculation.</p>
                     </div>
                     <div class="controls">
-                        <button id="btn-next-step" class="btn">Next Step</button>
-                        <button id="btn-reset-steps" class="btn btn-secondary">Reset</button>
+                        <button id="btn-next-step" class="btn">Reveal Next Step</button>
+                        <button id="btn-reset-steps" class="btn btn-secondary">Reset Math</button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="closer" class="presentation-section">
-            <div class="avatar master-reviewer"></div>
-            <h2>The Master Reviewer (The Closer)</h2>
+        <section id="closer" class="presentation-section card">
+            <h2><span class="icon">🎓</span> The Master Reviewer (The Closer)</h2>
             <div class="content">
-                <p>To wrap up, we must understand the critical difference between <strong>Net Area</strong> and <strong>Total Area</strong>.</p>
-                <p><strong>Net Area</strong> cancels out. If you dig a 4-foot hole (Area = -4) and create a 4-foot dirt pile (Area = 4), the net change to the landscape is 0. Calculus computes <em>Net Area</em> by default.</p>
-                <p><strong>Total Area</strong> is absolute. If I want to paint the triangles, I don't care that one is upside down. I need paint for 4 square units PLUS 4 square units. Total Area = |-4| + |4| = 8.</p>
+                <p>To master this topic, you must understand the critical difference between <strong>Net Area</strong> and <strong>Total Area</strong>. Let's use a real-world analogy.</p>
+                
+                <div class="grid-2-col">
+                    <div class="info-box net-area-box">
+                        <h3>Net Area (Displacement)</h3>
+                        <p>Imagine walking 4 miles East (+4), then turning around and walking 4 miles West (-4). How far are you from your starting point? <strong>0 miles.</strong></p>
+                        <p>Calculus computes <em>Net Area</em> by default. The positive and negative regions cancel each other out.</p>
+                    </div>
+                    <div class="info-box total-area-box">
+                        <h3>Total Area (Distance)</h3>
+                        <p>Imagine your fitness tracker. It doesn't care about direction. It measures that you walked 4 miles, plus another 4 miles. Your total distance is <strong>8 miles.</strong></p>
+                        <p>Total Area treats all area as positive. We use absolute values: |-4| + |4| = 8.</p>
+                    </div>
+                </div>
 
                 <div class="interactive-box">
-                    <h3>Interactive Graphing Demo</h3>
-                    <p>Choose a function and see the difference between Net and Total Area!</p>
+                    <h3>Interactive Graphing Explorer</h3>
+                    <p>Select different functions to instantly see how Net Area and Total Area behave differently across different curves.</p>
                     <div class="demo-controls">
-                        <label for="func-select">Function:</label>
-                        <select id="func-select">
-                            <option value="linear">f(x) = 2x - 4 on [0, 4]</option>
-                            <option value="sine">f(x) = sin(x) on [0, 2&pi;]</option>
-                            <option value="cubic">f(x) = x&sup3; - x on [-1, 1]</option>
+                        <label for="func-select">Select a Function:</label>
+                        <select id="func-select" class="dropdown">
+                            <option value="linear">Linear: f(x) = 2x - 4 on [0, 4]</option>
+                            <option value="sine">Wave: f(x) = sin(x) on [0, 2&pi;]</option>
+                            <option value="cubic">Curve: f(x) = x&sup3; - x on [-1, 1]</option>
                         </select>
                     </div>
                     <div class="demo-display">
                         <canvas id="demo-canvas" width="600" height="300"></canvas>
                         <div class="demo-stats">
-                            <p>Net Area: <span id="stat-net" class="stat-highlight">0</span></p>
-                            <p>Total Area: <span id="stat-total" class="stat-highlight">8</span></p>
+                            <div class="stat-card">
+                                <span>Calculus Result (Net Area)</span>
+                                <h3 id="stat-net" class="stat-net-color">0.00</h3>
+                            </div>
+                            <div class="stat-card">
+                                <span>Absolute Space (Total Area)</span>
+                                <h3 id="stat-total" class="stat-total-color">8.00</h3>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="quiz-box">
+                <div class="quiz-box glass-panel">
                     <h3>Knowledge Check</h3>
-                    <p>If a definite integral evaluates to a negative number, what does that mean?</p>
+                    <p>If a definite integral evaluates to a negative number (e.g., -10), what does that tell you about the graph?</p>
                     <div class="quiz-options">
-                        <label><input type="radio" name="q1" value="wrong1"> The math was done incorrectly.</label>
-                        <label><input type="radio" name="q1" value="correct"> There is more area below the x-axis than above it.</label>
-                        <label><input type="radio" name="q1" value="wrong2"> The total area is zero.</label>
+                        <label><input type="radio" name="q1" value="wrong1"> The student made an arithmetic mistake; area cannot be negative.</label>
+                        <label><input type="radio" name="q1" value="correct"> There is more geometric area located below the x-axis than above it.</label>
+                        <label><input type="radio" name="q1" value="wrong2"> The graph never crosses the x-axis.</label>
                     </div>
-                    <button id="btn-submit-quiz" class="btn">Submit Answer</button>
+                    <button id="btn-submit-quiz" class="btn">Check Answer</button>
                     <p id="quiz-feedback" class="feedback"></p>
                 </div>
             </div>
@@ -167,7 +216,7 @@
     </main>
 
     <footer>
-        <p>Created for High School Calculus Students. Learn visually!</p>
+        <p>Created for High School Calculus Students. Learn visually, understand deeply.</p>
     </footer>
 
     <script src="app.js"></script>
